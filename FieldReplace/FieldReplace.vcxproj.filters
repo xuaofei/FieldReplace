@@ -33,6 +33,21 @@
     <ClInclude Include="Resource.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="DropFileEdit.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="ChineseCharacters.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="PhraseManager.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="DictionaryConfigPage.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Chinese2PinYin.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="FieldReplace.cpp">
@@ -42,6 +57,21 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="stdafx.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="DropFileEdit.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="ChineseCharacters.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="PhraseManager.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="DictionaryConfigPage.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Chinese2PinYin.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

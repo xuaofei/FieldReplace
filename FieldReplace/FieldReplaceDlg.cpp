@@ -7,6 +7,7 @@
 #include "FieldReplaceDlg.h"
 #include "afxdialogex.h"
 
+
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
@@ -30,6 +31,7 @@ public:
 // 实现
 protected:
 	DECLARE_MESSAGE_MAP()
+public:
 };
 
 CAboutDlg::CAboutDlg() : CDialogEx(IDD_ABOUTBOX)
@@ -42,6 +44,7 @@ void CAboutDlg::DoDataExchange(CDataExchange* pDX)
 }
 
 BEGIN_MESSAGE_MAP(CAboutDlg, CDialogEx)
+	ON_WM_DESTROY()
 END_MESSAGE_MAP()
 
 
@@ -58,12 +61,14 @@ CFieldReplaceDlg::CFieldReplaceDlg(CWnd* pParent /*=NULL*/)
 void CFieldReplaceDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialogEx::DoDataExchange(pDX);
+	DDX_Control(pDX, IDC_TAB1, m_tabCtrl);
 }
 
 BEGIN_MESSAGE_MAP(CFieldReplaceDlg, CDialogEx)
 	ON_WM_SYSCOMMAND()
 	ON_WM_PAINT()
 	ON_WM_QUERYDRAGICON()
+	ON_COMMAND(IDOK, &CFieldReplaceDlg::OnOK)
 END_MESSAGE_MAP()
 
 
@@ -99,6 +104,8 @@ BOOL CFieldReplaceDlg::OnInitDialog()
 	SetIcon(m_hIcon, FALSE);		// 设置小图标
 
 	// TODO: 在此添加额外的初始化代码
+	this->initUIInternal();
+	this->initConfig();
 
 	return TRUE;  // 除非将焦点设置到控件，否则返回 TRUE
 }
@@ -152,3 +159,59 @@ HCURSOR CFieldReplaceDlg::OnQueryDragIcon()
 	return static_cast<HCURSOR>(m_hIcon);
 }
 
+
+void CFieldReplaceDlg::initUIInternal()
+{
+	CRect rec;
+	GetClientRect(&rec);
+	//创建tabCtrl控件  
+
+	//添加控件按钮名称
+	m_tabCtrl.InsertItem(0, _T("字典表"));
+	m_tabCtrl.InsertItem(1, _T("替换字段"));
+	//对话框页面  
+	m_dictionaryConfigPage.Create(IDD_DICTIONARYCONFIG_DIALOG, GetDlgItem(IDC_TAB1));
+
+	m_tabCtrl.MoveWindow(0, 0, rec.Width(), rec.Height());
+	m_dictionaryConfigPage.MoveWindow(0, 25, rec.Width(), rec.Height());
+
+	//显示第一个页面  
+	//m_carList.ShowWindow(SW_SHOW);
+	//设置第一个页面显示  
+	m_tabCtrl.SetCurSel(0);
+	m_dictionaryConfigPage.ShowWindow(SW_SHOW);
+}
+
+void CFieldReplaceDlg::initConfig()
+{
+	//CChineseCharactersTable::GetInstance()->loadChineseCharactersFromFile(std::string(""));
+}
+
+
+
+
+void CFieldReplaceDlg::OnOK()
+{
+	// TODO: 在此添加命令处理程序代码
+}
+
+
+BOOL CFieldReplaceDlg::PreTranslateMessage(MSG* pMsg)
+{
+	// TODO: 在此添加专用代码和/或调用基类
+	// TODO: Add your specialized code here and/or call the base class  
+	// 把Esc和Enter按键事件消息过滤掉，否则该消息会导致对应应用程序调用OnOK（）方法，结束应用程序  
+	if (pMsg->message == WM_KEYDOWN)
+	{
+		switch (pMsg->wParam)
+		{
+		case VK_ESCAPE: //Esc按键事件  
+			return true;
+		case VK_RETURN: //Enter按键事件  
+			return true;
+		default:
+			break;
+		}
+	}
+	return CDialogEx::PreTranslateMessage(pMsg);
+}

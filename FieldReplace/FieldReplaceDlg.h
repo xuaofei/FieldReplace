@@ -3,7 +3,8 @@
 //
 
 #pragma once
-
+#include "afxcmn.h"
+#include "DictionaryConfigPage.h"
 
 // CFieldReplaceDlg ¶Ô»°¿ò
 class CFieldReplaceDlg : public CDialogEx
@@ -31,4 +32,14 @@ protected:
 	afx_msg void OnPaint();
 	afx_msg HCURSOR OnQueryDragIcon();
 	DECLARE_MESSAGE_MAP()
+private:
+	void initUIInternal();
+	void initConfig();
+
+	CTabCtrl m_tabCtrl;
+	CDictionaryConfigPage m_dictionaryConfigPage;
+	CDialog m_page2;
+public:
+	afx_msg void OnOK();
+	virtual BOOL PreTranslateMessage(MSG* pMsg);
 };
