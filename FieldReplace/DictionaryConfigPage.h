@@ -39,12 +39,13 @@ public:
 	virtual BOOL PreTranslateMessage(MSG* pMsg);
 	afx_msg void OnEnChangeSearchphrase();
 private:
-	//static bool compare(const CChineseCharacters* a, const CChineseCharacters *b);
+	void LoadDictionary();
 	void GetPinYin(wstring& Chinese, wstring& PinYin);
 	void splitString(const std::wstring& s, std::vector<std::wstring>& v, const std::wstring& c);
 	static wstring Ansi2WChar(LPCSTR pszSrc, int nLen);
 	static std::string WChar2Ansi(LPCWSTR pwszSrc);
-
+	CString GetModuleDir();
+	void FindDictionaryFile(CString strFoldername,vector<CString> &dictionary);
 
 	CListCtrl m_SearchDictionaryList;
 	vector<wstring> m_lines;
@@ -53,4 +54,10 @@ private:
 	CEdit m_EditSearchPhrase;
 	CEdit m_EditAddDirtionaryForOriginalPhrase;
 	CEdit m_EditAddDirtionaryForNewPhrase;
+
+	CString m_DictionaryDir;
+	CString m_DortedDictionaryDir;
+
+	CString m_DictionaryDirPath;
+	CString m_DortedDictionaryDirPath;
 };

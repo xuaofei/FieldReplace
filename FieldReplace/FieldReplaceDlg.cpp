@@ -69,6 +69,7 @@ BEGIN_MESSAGE_MAP(CFieldReplaceDlg, CDialogEx)
 	ON_WM_PAINT()
 	ON_WM_QUERYDRAGICON()
 	ON_COMMAND(IDOK, &CFieldReplaceDlg::OnOK)
+	ON_NOTIFY(TCN_SELCHANGE, IDC_TAB1, &CFieldReplaceDlg::OnSelchangeTab)
 END_MESSAGE_MAP()
 
 
@@ -106,6 +107,8 @@ BOOL CFieldReplaceDlg::OnInitDialog()
 	// TODO: 在此添加额外的初始化代码
 	this->initUIInternal();
 	this->initConfig();
+
+	this->ShowWindow(SW_HIDE);
 
 	return TRUE;  // 除非将焦点设置到控件，否则返回 TRUE
 }
@@ -164,13 +167,16 @@ void CFieldReplaceDlg::initUIInternal()
 {
 	CRect rec;
 	GetClientRect(&rec);
+
+	
 	//创建tabCtrl控件  
 
 	//添加控件按钮名称
-	m_tabCtrl.InsertItem(0, _T("字典表"));
-	m_tabCtrl.InsertItem(1, _T("替换字段"));
+	//m_tabCtrl.InsertItem(0, _T("字典表"));
+	//m_tabCtrl.InsertItem(1, _T("替换字段"));
 	//对话框页面  
 	m_dictionaryConfigPage.Create(IDD_DICTIONARYCONFIG_DIALOG, GetDlgItem(IDC_TAB1));
+	m_phraseReplacePage.Create(IDD_PHRASEREPLACE_DIALOG, GetDlgItem(IDC_TAB1));
 
 	m_tabCtrl.MoveWindow(0, 0, rec.Width(), rec.Height());
 	m_dictionaryConfigPage.MoveWindow(0, 25, rec.Width(), rec.Height());
@@ -179,7 +185,9 @@ void CFieldReplaceDlg::initUIInternal()
 	//m_carList.ShowWindow(SW_SHOW);
 	//设置第一个页面显示  
 	m_tabCtrl.SetCurSel(0);
-	m_dictionaryConfigPage.ShowWindow(SW_SHOW);
+	//m_dictionaryConfigPage.ShowWindow(SW_SHOW);
+
+	m_tabCtrl.ShowWindow(SW_HIDE);
 }
 
 void CFieldReplaceDlg::initConfig()
@@ -214,4 +222,25 @@ BOOL CFieldReplaceDlg::PreTranslateMessage(MSG* pMsg)
 		}
 	}
 	return CDialogEx::PreTranslateMessage(pMsg);
+}
+
+
+void CFieldReplaceDlg::OnSelchangeTab(NMHDR *pNMHDR, LRESULT *pResult)
+{
+	// TODO: 在此添加控件通知处理程序代码
+
+	//获取所选择的页面  
+	//int nCurSel = m_tabCtrl.GetCurSel();
+	//if (nCurSel == 0)
+	//{
+	//	//页面一显示，页面二隐藏  
+	//	m_dictionaryConfigPage.ShowWindow(SW_SHOW);
+	//	m_phraseReplacePage.ShowWindow(SW_HIDE);
+	//}
+	//else if (nCurSel == 1)
+	//{
+	//	m_dictionaryConfigPage.ShowWindow(SW_HIDE);
+	//	m_phraseReplacePage.ShowWindow(SW_SHOW);
+	//}
+	*pResult = 0;
 }

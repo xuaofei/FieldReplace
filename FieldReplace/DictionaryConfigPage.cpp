@@ -4,11 +4,8 @@
 #include "stdafx.h"
 #include "FieldReplace.h"
 #include "DictionaryConfigPage.h"
+#include "PhraseManager.h"
 #include "afxdialogex.h"
-
-
-
-
 
 // CDictionaryConfigPage 对话框
 
@@ -17,9 +14,12 @@ IMPLEMENT_DYNAMIC(CDictionaryConfigPage, CDialogEx)
 CDictionaryConfigPage::CDictionaryConfigPage(CWnd* pParent /*=NULL*/)
 	: CDialogEx(IDD_DICTIONARYCONFIG_DIALOG, pParent)
 {
-	m_lines.reserve(10000 * 25);
+	m_lines.reserve(10000 * 30);
 	m_SearchOriginalPhrase.reserve(1000);
 	m_SearchNewPhrase.reserve(1000);
+
+	m_DictionaryDir = L"DictionaryDir";
+	m_DortedDictionaryDir = L"DortedDictionaryDir";
 }
 
 CDictionaryConfigPage::~CDictionaryConfigPage()
@@ -53,58 +53,7 @@ END_MESSAGE_MAP()
 
 void CDictionaryConfigPage::OnAddDictionaryTableFile()
 {
-	// TODO: 在此添加控件通知处理程序代码
-	// TODO: 在此添加控件通知处理程序代码
-	CString strFile = _T("");
 
-	CFileDialog    dlgFile(TRUE, NULL, NULL, OFN_HIDEREADONLY, _T("Describe Files (*.txt)|*.txt|All Files (*.*)|*.*||"), NULL);
-
-	if (dlgFile.DoModal())
-	{
-		strFile = dlgFile.GetPathName();
-		CEdit *pEdit = (CEdit *)GetDlgItem(IDC_EDIT1);
-		pEdit->SetWindowTextW(strFile);
-	}
-
-	// TODO: 在此添加控件通知处理程序代码
-	GetDlgItem(IDC_EDIT1)->GetWindowTextW(strFile);
-	ifstream in(strFile);
-
-
-	string line;
-
-	if (in) // 有该文件  
-	{
-		while (getline(in, line)) // line中不包括每行的换行符  
-		{
-			std::wstring wLine = Ansi2WChar(line.c_str(), line.size());
-			m_lines.push_back(wLine);
-		}
-	}
-
-	for (size_t i = 0; i < m_lines.size(); i++)
-	{
-		//获取首字结构体
-		wstring splitString = L"=";
-		vector<std::wstring> vecString;
-		this->splitString(m_lines[i], vecString, splitString);
-		if (vecString.size() == 2)
-		{
-			CPhraseManager::GetInstance()->addOnePhrase(vecString[0], vecString[1]);
-		}
-	}
-
-	CRect rect;
-	m_SearchDictionaryList.GetClientRect(&rect);
-	m_SearchDictionaryList.MoveWindow(rect.left, 200, 600, 200);
-	m_SearchDictionaryList.GetClientRect(&rect);
-	int iLength = rect.Width();
-
-	m_SearchDictionaryList.SetExtendedStyle(m_SearchDictionaryList.GetExtendedStyle() | LVS_EX_FULLROWSELECT);
-	m_SearchDictionaryList.InsertColumn(0, _T("序号"), LVCFMT_LEFT, 200);
-	m_SearchDictionaryList.InsertColumn(1, _T("原字段"), LVCFMT_LEFT, 200);
-	m_SearchDictionaryList.InsertColumn(2, _T("新字段"), LVCFMT_LEFT, 200);
-	m_SearchDictionaryList.SetItemCount(m_lines.size());
 }
 
 
@@ -143,6 +92,73 @@ void CDictionaryConfigPage::OnAddOneDictionary()
 		m_SearchDictionaryList.EnsureVisible(m_lines.size() - 1, FALSE);
 		m_SearchDictionaryList.SetItemState(m_lines.size() - 1, LVIS_SELECTED | LVIS_FOCUSED, LVIS_SELECTED | LVIS_FOCUSED);
 	}
+}
+
+
+void CDictionaryConfigPage::LoadDictionary()
+{
+	// TODO: 在此添加控件通知处理程序代码
+	// TODO: 在此添加控件通知处理程序代码
+	//CString strFile = _T("");
+
+	//CFileDialog    dlgFile(TRUE, NULL, NULL, OFN_HIDEREADONLY, _T("Describe Files (*.txt)|*.txt|All Files (*.*)|*.*||"), NULL);
+
+	//if (dlgFile.DoModal())
+	//{
+	//	strFile = dlgFile.GetPathName();
+	//	CEdit *pEdit = (CEdit *)GetDlgItem(IDC_EDIT1);
+	//	pEdit->SetWindowTextW(strFile);
+	//}
+
+	//// TODO: 在此添加控件通知处理程序代码
+	//GetDlgItem(IDC_EDIT1)->GetWindowTextW(strFile);
+
+	vector<CString> dictionarys;
+	FindDictionaryFile(m_DictionaryDirPath, dictionarys);
+
+	for (auto iter = dictionarys.begin(); iter != dictionarys.end(); iter++)
+	{
+		CString strFile = *iter;
+
+		ifstream in(strFile);
+
+
+		string line;
+
+		if (in) // 有该文件  
+		{
+			while (getline(in, line)) // line中不包括每行的换行符  
+			{
+				std::wstring wLine = Ansi2WChar(line.c_str(), line.size());
+				m_lines.push_back(wLine);
+			}
+		}
+
+		for (size_t i = 0; i < m_lines.size(); i++)
+		{
+			//获取首字结构体
+			wstring splitString = L"=";
+			vector<std::wstring> vecString;
+			this->splitString(m_lines[i], vecString, splitString);
+			if (vecString.size() == 2)
+			{
+				CPhraseManager::GetInstance()->addOnePhrase(vecString[0], vecString[1]);
+			}
+		}
+
+	}
+
+	//CRect rect;
+	//m_SearchDictionaryList.GetClientRect(&rect);
+	//m_SearchDictionaryList.MoveWindow(rect.left, 200, 600, 200);
+	//m_SearchDictionaryList.GetClientRect(&rect);
+	//int iLength = rect.Width();
+
+	//m_SearchDictionaryList.SetExtendedStyle(m_SearchDictionaryList.GetExtendedStyle() | LVS_EX_FULLROWSELECT);
+	//m_SearchDictionaryList.InsertColumn(0, _T("序号"), LVCFMT_LEFT, 200);
+	//m_SearchDictionaryList.InsertColumn(1, _T("原字段"), LVCFMT_LEFT, 200);
+	//m_SearchDictionaryList.InsertColumn(2, _T("新字段"), LVCFMT_LEFT, 200);
+	//m_SearchDictionaryList.SetItemCount(m_lines.size());
 }
 
 void CDictionaryConfigPage::GetPinYin(wstring& Chinese, wstring& PinYin)
@@ -254,10 +270,21 @@ int CDictionaryConfigPage::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	if (CDialogEx::OnCreate(lpCreateStruct) == -1)
 		return -1;
 
+
 	// TODO:  在此添加您专用的创建代码
+	m_DictionaryDirPath = GetModuleDir() + m_DictionaryDir;
+	if (!PathFileExists(m_DictionaryDirPath))
+	{
+		::CreateDirectory(m_DictionaryDirPath, NULL);//创建目录,已有的话不影响
+	}
 
+	m_DortedDictionaryDirPath = GetModuleDir() + m_DortedDictionaryDir;
+	if (!PathFileExists(m_DortedDictionaryDirPath))
+	{
+		::CreateDirectory(m_DortedDictionaryDirPath, NULL);//创建目录,已有的话不影响
+	}
 
-
+	LoadDictionary();
 	return 0;
 }
 
@@ -341,4 +368,45 @@ void CDictionaryConfigPage::OnEnChangeSearchphrase()
 	// TODO:  在此添加控件通知处理程序代码
 
 	OnSearchPhrase();
+}
+
+CString CDictionaryConfigPage::GetModuleDir()
+{
+	HMODULE module = GetModuleHandle(0);
+	WCHAR pFileName[MAX_PATH];
+	GetModuleFileName(module, pFileName, MAX_PATH);
+
+	CString csFullPath(pFileName);
+	int nPos = csFullPath.ReverseFind(_T('\\'));
+	if (nPos < 0)
+		return CString("");
+	else
+		return csFullPath.Left(nPos + 1);
+}
+
+void CDictionaryConfigPage::FindDictionaryFile(CString strFoldername, vector<CString> &dictionarys)
+{
+	CFileFind tempFind;
+	BOOL bFound; //判断是否成功找到文件  
+	bFound = tempFind.FindFile(strFoldername + L"\\*.txt");//修改" "内内容给限定查找文件类型  
+	CString strTmp;   //如果找到的是文件夹 存放文件夹路径  
+	while (bFound)      //遍历所有文件  
+	{
+		
+		bFound = tempFind.FindNextFile(); //第一次执行FindNextFile是选择到第一个文件，以后执行为选择到下一个文件
+		CString f = tempFind.GetFileName();
+		if (tempFind.IsDots())
+			continue; //如果找到的是返回上层的目录 则结束本次查找  
+		if (tempFind.IsDirectory())   //找到的是文件夹，则遍历该文件夹下的文件  
+		{
+			continue; //保存文件名，包括后缀名
+		}
+		else
+		{
+			strTmp = tempFind.GetFilePath(); //保存文件名，包括后缀名  
+			dictionarys.push_back(strTmp);
+		}
+	}
+	tempFind.Close();
+	return;
 }
